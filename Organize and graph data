@@ -1,0 +1,289 @@
+
+Option Explicit
+
+
+Sub abc_IM_9P()
+Dim fso As Object
+Dim fldTop As Object
+Dim fldFirst As Object
+Dim fldSecond As Object
+Dim fldThird As Object
+Dim objfile As Object
+Dim wb As Workbook
+Dim wbTarget As Workbook
+Dim RootPath As String
+
+Dim i As Long
+Dim j As Long
+Dim temp_name As Boolean
+Dim folder_cnt As Long
+folder_cnt = Range("D3")
+
+i = 0
+j = 1
+
+Set wbTarget = ThisWorkbook '현재 파일 변수에 할당
+
+RootPath = ThisWorkbook.Path 'Range("B2").Value '최상위 폴더명
+
+Set fso = CreateObject("Scripting.FileSystemObject")
+
+'최상위 폴더 설정
+Set fldTop = fso.GetFolder(RootPath)
+
+wbTarget.Sheets("Result").Range("A1:DY500").Value = ""
+'최상위 폴더아래 있는 하위폴더 (첫번째 하위 폴더) 각각에 대해
+For Each fldFirst In fldTop.subfolders '20200501_1
+    
+    '첫번째 폴더 아래 있는 하위폴더(두번째 하위폴더) 각각에 대해
+    For Each fldSecond In fldFirst.subfolders '01_#08_HJW
+    
+        '두번째 폴더 아래 있는 하위폴더(세번째 하위폴더) 각각에 대해
+        'For Each fldThird In fldSecond.subfolders
+    
+            '세번째 하위폴더안의 각 파일에 대해
+            For Each objfile In fldSecond.Files
+                
+                temp_name = InStr(objfile, "VM_+9.xlsx")
+                
+                If temp_name = True Then
+                
+                    '파일 열기
+                    Set wb = Workbooks.Open(objfile)
+                    
+                    
+                    
+                    'VM+9 복사
+                    Application.CutCopyMode = False
+                    'RAW라는 이름의 시트의 B2:DY2 값 복사
+                    wb.Worksheets(1).Range("A2:DX2").Copy
+                    
+                    '현재 파일의 Resut라는 이름의 시트의 A1에 붙여넣기
+                    wbTarget.Sheets("Result").Range("B" & (j + i * (folder_cnt * 4))).PasteSpecial Paste:=xlPasteValues
+                    wbTarget.Sheets("Result").Range("A" & (j + i * (folder_cnt * 4))).Value = (j & " Board" & (i + 1) & " VM +9")
+                    
+                    Application.CutCopyMode = False
+                    
+                    
+                    '열었던 파일 닫기
+                    wb.Close False
+                    
+                End If
+                    
+                
+                temp_name = InStr(objfile, "VM_-9.xlsx")
+                
+                If temp_name = True Then
+                
+                    '파일 열기
+                    Set wb = Workbooks.Open(objfile)
+                    
+                    
+                    
+                    'VM-9 복사
+                    Application.CutCopyMode = False
+                    'RAW라는 이름의 시트의 B2:DY2 값 복사
+                    wb.Worksheets(1).Range("A2:DX2").Copy
+                    
+                    '현재 파일의 Resut라는 이름의 시트의 A1에 붙여넣기
+                    wbTarget.Sheets("Result").Range("B" & (j + folder_cnt + i * (folder_cnt * 4))).PasteSpecial Paste:=xlPasteValues
+                    wbTarget.Sheets("Result").Range("A" & (j + folder_cnt + i * (folder_cnt * 4))).Value = (j & " Board" & (i + 1) & " VM -9")
+                    
+                    Application.CutCopyMode = False
+                    
+                    '열었던 파일 닫기
+                    wb.Close False
+                    
+                    i = i + 1
+                    
+                End If
+                    
+                
+                temp_name = InStr(objfile, "IM_+9.xlsx")
+                
+                If temp_name = True Then
+                
+                    '파일 열기
+                    Set wb = Workbooks.Open(objfile)
+                    
+                    'IM+9복사
+                    Application.CutCopyMode = False
+                    'RAW라는 이름의 시트의 B2:DY2 값 복사
+                    wb.Worksheets(1).Range("A2:DX2").Copy
+                    
+                    '현재 파일의 Resut라는 이름의 시트의 A1에 붙여넣기
+                    wbTarget.Sheets("Result").Range("B" & (j + (folder_cnt * 2) + i * (folder_cnt * 4))).PasteSpecial Paste:=xlPasteValues
+                    wbTarget.Sheets("Result").Range("A" & (j + (folder_cnt * 2) + i * (folder_cnt * 4))).Value = (j & " Board" & (i + 1) & " IM +9")
+                    
+                    Application.CutCopyMode = False
+                    
+                    '열었던 파일 닫기
+                    wb.Close False
+                    
+                End If
+                    
+                    
+                temp_name = InStr(objfile, "IM_-9.xlsx")
+                
+                If temp_name = True Then
+                
+                    '파일 열기
+                    Set wb = Workbooks.Open(objfile)
+                    
+                    'IM-9 복사
+                    Application.CutCopyMode = False
+                    'RAW라는 이름의 시트의 B2:DY2 값 복사
+                    wb.Worksheets(1).Range("A2:DX2").Copy
+                    
+                    '현재 파일의 Resut라는 이름의 시트의 A1에 붙여넣기
+                    wbTarget.Sheets("Result").Range("B" & (j + (folder_cnt * 3) + i * (folder_cnt * 4))).PasteSpecial Paste:=xlPasteValues
+                    wbTarget.Sheets("Result").Range("A" & (j + (folder_cnt * 3) + i * (folder_cnt * 4))).Value = (j & " Board" & (i + 1) & " IM -9")
+                    
+                    Application.CutCopyMode = False
+                    
+                    '열었던 파일 닫기
+                    wb.Close False
+                    
+                End If
+                
+            Next
+        'Next
+    Next
+    j = j + 1
+    i = 0
+Next
+
+End Sub
+
+Function NumToXLColumn(ByVal col_num As Long) As String
+
+    While (col_num > 0)
+
+        col_num = col_num - 1
+
+        NumToXLColumn = Chr(65 + (col_num Mod 26)) + NumToXLColumn
+
+        '///// Chr(65) = "A"
+
+        col_num = col_num \ 26
+
+    Wend
+
+    
+
+End Function
+
+Sub 열전체동일확인()
+    Dim rg As Range, f As Range
+    Dim str As String
+    Dim f1 As Long, f2 As Long, f3 As Long
+    Dim rc As Long, cc As Long, c As Long
+    
+    Dim folder_cnt As Long
+    Dim Board_cnt As Long
+    
+    folder_cnt = Range("D3")
+    Board_cnt = Range("D4")
+    
+    Application.ScreenUpdating = False
+    With Sheets("Result")
+        Set rg = .[A1].CurrentRegion
+        rg.ClearComments
+        Set rg = rg.Offset(, 1).Resize(, rg.Columns.Count - 1)
+        rc = folder_cnt * 4 * 16: cc = rg.Columns.Count
+        
+        For f1 = 1 To cc - 1
+            For f2 = f1 + 1 To cc
+                c = 0
+                For f3 = 1 To rc
+                    If rg(f3, f1) = rg(f3, f2) Then
+                        c = c + 1
+                    Else
+                        Exit For
+                    End If
+                    If c = rc Then
+                        str = Mid(rg(f3, f2).Address, 2)
+                        str = Left(str, InStr(str, "$") - 1)
+                        rg(1, f1).AddComment str & "열과 동일"
+                        str = Mid(rg(f3, f1).Address, 2)
+                        str = Left(str, InStr(str, "$") - 1)
+                        rg(1, f2).AddComment str & "열과 동일"
+                    End If
+                Next
+            Next
+        Next
+        .Activate
+    End With
+    Application.DisplayCommentIndicator = xlCommentAndIndicator
+    Set rg = Nothing: Set f = Nothing
+    'Worksheets("명령").Range("M3").Value = i * 2 - 2
+    Application.ScreenUpdating = True
+End Sub
+
+Sub 행전체동일확인()
+    Dim rg As Range, f As Range
+    Dim str As String
+    Dim f1 As Long, f2 As Long, f3 As Long
+    Dim rc As Long, cc As Long, c As Long
+    Dim i As Integer
+    Dim folder_cnt As Long
+    Dim Board_cnt As Long
+    
+    folder_cnt = Range("D3")
+    Board_cnt = Range("D4")
+    i = 1
+    Application.ScreenUpdating = False
+    
+    With Sheets("Result")
+        Set rg = .[A1].CurrentRegion
+        rg.ClearComments
+        Set rg = rg.Offset(, 1).Resize(, rg.Columns.Count - 1)
+        rc = folder_cnt * 4 * Board_cnt: cc = rg.Columns.Count
+        
+        For f1 = 1 To rc - 1
+            For f2 = f1 + 1 To rc
+                c = 0
+                For f3 = 1 To cc
+                    If rg(f1, f3) = rg(f2, f3) Then
+                        c = c + 1
+                    Else
+                        Exit For
+                    End If
+                    If c = cc Then
+                        str = Mid(rg(f2, f3).Address, 2)
+                        str = Mid(str, InStr(str, "$") + 1)
+                        'MsgBox (str & "행과 동일")
+                        rg(f1, i).AddComment str & "행과 동일"
+                        str = Mid(rg(f1, f3).Address, 2)
+                        str = Mid(str, InStr(str, "$") + 1)
+                        'MsgBox (str & "행과 동일")
+                        rg(f2, i).AddComment str & "행과 동일"
+                        i = i + 1
+                    End If
+                Next
+            Next
+        Next
+        .Activate
+    End With
+    
+    Application.DisplayCommentIndicator = xlCommentAndIndicator
+    Set rg = Nothing: Set f = Nothing
+    Worksheets("명령").Range("M2").Value = i * 2 - 2
+    Application.ScreenUpdating = True
+End Sub
+
+
+
+Sub 메모삭제()
+    With Sheets("Result")
+        .Cells.ClearComments
+        .Activate
+    End With
+    With Application
+        .DisplayCommentIndicator = xlCommentIndicatorOnly
+        .ScreenUpdating = True
+    End With
+    
+    Worksheets("명령").Range("M2").Value = 0
+End Sub
+
